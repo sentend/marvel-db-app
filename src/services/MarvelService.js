@@ -31,11 +31,14 @@ class MarvelService {
 		}
 
 		return {
+			id: char.id,
 			name: char.name,
 			thumbnail: char.thumbnail.path + '.' + char.thumbnail.extension,
 			description: char.description,
 			homepage: char.urls[0].url,
 			wiki: char.urls[1].url,
+			comics: char.comics.items,
+			availableComics: char.comics.available,
 		}
 	}
 }
