@@ -1,20 +1,22 @@
 import { Component } from 'react'
 
 import MarvelService from '../../services/MarvelService'
+import Spinner from '../spinner/Spinner'
 
 import './randomChar.scss'
-import thor from '../../resources/img/thor.jpeg'
 import mjolnir from '../../resources/img/mjolnir.png'
 
 class RandomChar extends Component {
 	constructor(props) {
 		super(props)
 		this.state = {
-			name: null,
-			thumbnail: null,
-			description: null,
-			homepage: null,
-			wiki: null,
+			char: {
+				name: null,
+				thumbnail: null,
+				description: null,
+				homepage: null,
+				wiki: null,
+			},
 		}
 	}
 
@@ -22,20 +24,17 @@ class RandomChar extends Component {
 
 	getRandomChar = () => {
 		const id = Math.floor(Math.random() * (1011400 - 1011000) + 1011000)
-		this.marvelRequest.getCharacter(id).then((data) => {
-			this.setState({
-				name: data.data.results[0].name,
-				thumbnail: data.data.results[0].thumbnail.path + '.' + data.data.results[0].thumbnail.extension,
-				description: data.data.results[0].description,
-				homepage: data.data.results[0].urls[0].url,
-				wiki: data.data.results[0].urls[1].url,
-			})
+		this.marvelRequest.getCharacter(id).then((char) => {
+			this.setState({ char })
 		})
 	}
 
 	render() {
+		const {
+			char: { name, description, thumbnail, homepage, wiki },
+		} = this.state
+
 		console.log(this.state)
-		const { name, description, thumbnail, homepage, wiki } = this.state
 
 		return (
 			<div className='randomchar'>
