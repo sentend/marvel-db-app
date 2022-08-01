@@ -5,8 +5,6 @@ import RandomChar from '../randomChar/RandomChar'
 import CharList from '../charList/CharList'
 import CharInfo from '../charInfo/CharInfo'
 
-import decoration from '../../resources/img/vision.png'
-
 class App extends Component {
 	constructor(props) {
 		super(props)
@@ -31,7 +29,6 @@ class App extends Component {
 						<CharList getCharId={this.handleGetCharId} />
 						<CharInfo id={id} />
 					</div>
-					<img className='bg-decoration' src={decoration} alt='vision' />
 				</main>
 			</div>
 		)

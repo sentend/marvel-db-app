@@ -25,6 +25,11 @@ class RandomChar extends Component {
 
 	componentDidMount() {
 		this.getRandomChar()
+		this.timerID = setInterval(this.getRandomChar, 6000)
+	}
+
+	componentWillUnmount() {
+		clearInterval(this.timerID)
 	}
 
 	marvelRequest = new MarvelService()
