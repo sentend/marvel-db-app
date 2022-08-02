@@ -8,6 +8,7 @@ import './style/style.scss'
 ReactDOM.render(
 	<React.StrictMode>
 		<App />
+		<p>qwqwqw</p>
 	</React.StrictMode>,
 	document.getElementById('root')
 )
