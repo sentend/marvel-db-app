@@ -78,15 +78,44 @@ class CharList extends Component {
 		})
 	}
 
+	refsArray = []
+
+	setLiRef = (ref) => {
+		this.refsArray.push(ref)
+	}
+
+	setFocusOnCharacter = (id) => {
+		this.refsArray.forEach((ref) => {
+			ref.classList.remove('char__item_selected')
+		})
+		this.refsArray[id].classList.add('char__item_selected')
+		this.refsArray[id].focus()
+	}
+
 	renderListItems = (charList) => {
-		const elements = charList.map((char) => {
+		const elements = charList.map((char, i) => {
 			let style = { objectFit: 'cover' }
 			if (char.thumbnail === 'http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg') {
 				style = { objectFit: 'unset' }
 			}
 
 			return (
-				<li className='char__item' key={char.name} onClick={() => this.props.getCharId(char.id)}>
+				<li
+					ref={this.setLiRef}
+					className='char__item'
+					key={char.name}
+					onClick={() => {
+						this.props.getCharId(char.id)
+						this.setFocusOnCharacter(i)
+					}}
+					tabIndex={0}
+					onKeyDown={(e) => {
+						if (e.key === ' ' || e.key === 'Enter') {
+							this.props.getCharId(char.id)
+							this.setFocusOnCharacter(i)
+						}
+					}}
+				>
 					<img src={char.thumbnail} alt={char.name} style={style} />
 					<div className='char__name'>{char.name}</div>
 				</li>
@@ -124,3 +153,5 @@ CharList.propTypes = {
 }
 
 export default CharList
+
+//done сделал рефы для кажой карточки и класс активности да и в целом уже все готово по проекту
