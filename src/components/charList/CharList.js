@@ -1,4 +1,4 @@
-import { Component } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import PropTypes from 'prop-types'
 
 import MarvelService from '../../services/MarvelService'
@@ -7,92 +7,82 @@ import Error from '../errorMessage/Error'
 
 import './charList.scss'
 
-class CharList extends Component {
-	constructor(props) {
-		super(props)
-		this.state = {
-			charList: [],
-			loading: true,
-			errorMessage: false,
-			loadingList: false,
-			offset: 350,
-			charEnded: false,
-			total: null,
+const CharList = (props) => {
+	const [charList, setCharList] = useState([])
+	const [newCharsLoading, setNewCharsLoading] = useState(false)
+	const [loading, setLoading] = useState(true)
+	const [errorMessage, setErrorMessage] = useState(false)
+	const [loadingList, setLoadingList] = useState(false)
+	const [offset, setOffset] = useState(400)
+	const [charEnded, setCharEnded] = useState(false)
+
+	const marvelRequest = new MarvelService()
+	const refsArray = useRef([])
+
+	useEffect(() => {
+		getCharacters()
+
+		window.addEventListener('scroll', loadMoreCharactersOnScroll)
+
+		return function cleanup() {
+			window.removeEventListener('scroll', loadMoreCharactersOnScroll)
 		}
+	}, [])
+
+	useEffect(() => {
+		if (newCharsLoading) {
+			loadMoreCharacters(offset)
+		}
+	}, [newCharsLoading])
+
+	const getCharacters = () => {
+		loadMoreCharacters()
 	}
 
-	componentDidMount() {
-		this.getCharacters()
-		this.marvelRequest.getTotalCharacters().then((total) => {
-			this.setState({ total })
-		})
-		window.addEventListener('scroll', this.loadMoreCharactersOnScroll)
-	}
-
-	componentWillUnmount() {
-		window.removeEventListener('scroll', this.loadMoreCharactersOnScroll)
-	}
-
-	marvelRequest = new MarvelService()
-
-	getCharacters = () => {
-		this.loadMoreCharacters()
-	}
-
-	loadMoreCharactersOnScroll = () => {
-		if (this.state.loadingList) {
+	const loadMoreCharactersOnScroll = () => {
+		if (loadingList) {
 			return
 		}
-		if (this.state.charEnded) {
-			window.removeEventListener('scroll', this.loadMoreCharactersOnScroll)
+		if (charEnded) {
+			window.removeEventListener('scroll', loadMoreCharactersOnScroll)
 		}
 		if (window.innerHeight + (window.scrollY - 37) >= document.documentElement.scrollHeight - 300) {
-			this.loadMoreCharacters(this.state.offset)
+			setNewCharsLoading(true)
 		}
 	}
 
-	loadMoreCharacters = (offset) => {
-		this.setState({
-			loadingList: true,
-		})
+	const loadMoreCharacters = (offsetLocal = offset) => {
+		setLoadingList(true)
 
-		this.marvelRequest
-			.getAllCharacters(offset)
+		marvelRequest
+			.getAllCharacters(offsetLocal)
 			.then((newCharList) => {
-				this.setState((state) => ({
-					charList: [...state.charList, ...newCharList],
-					loading: false,
-					errorMessage: false,
-					loadingList: false,
-					offset: state.offset + 9,
-					charEnded: newCharList.length < 9 ? true : false,
-				}))
+				setCharList((charList) => [...charList, ...newCharList])
+				setLoading(false)
+				setErrorMessage(false)
+				setLoadingList(false)
+				setOffset((offset) => offset + 9)
+				setCharEnded(newCharList.length < 9 ? true : false)
 			})
-			.catch(this.getError)
+			.catch(getError)
+			.finally(() => setNewCharsLoading(false))
 	}
 
-	getError = () => {
-		this.setState({
-			loading: false,
-			errorMessage: true,
-		})
+	const getError = () => {
+		setLoading(false)
+		setErrorMessage(true)
 	}
 
-	refsArray = []
-
-	setLiRef = (ref) => {
-		this.refsArray.push(ref)
-	}
-
-	setFocusOnCharacter = (id) => {
-		this.refsArray.forEach((ref) => {
+	const setFocusOnCharacter = (id) => {
+		refsArray.current.forEach((ref) => {
 			ref.classList.remove('char__item_selected')
 		})
-		this.refsArray[id].classList.add('char__item_selected')
-		this.refsArray[id].focus()
+
+		refsArray.current[id].classList.add('char__item_selected')
+		refsArray.current[id].focus()
 	}
 
-	renderListItems = (charList) => {
+	const renderListItems = (charList) => {
 		const elements = charList.map((char, i) => {
 			let style = { objectFit: 'cover' }
 			if (char.thumbnail === 'http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg') {
@@ -101,18 +91,18 @@ class CharList extends Component {
 
 			return (
 				<li
-					ref={this.setLiRef}
+					ref={(el) => (refsArray.current[i] = el)}
 					className='char__item'
 					key={char.name}
 					onClick={() => {
-						this.props.getCharId(char.id)
-						this.setFocusOnCharacter(i)
+						props.getCharId(char.id)
+						setFocusOnCharacter(i)
 					}}
 					tabIndex={0}
 					onKeyDown={(e) => {
 						if (e.key === ' ' || e.key === 'Enter') {
-							this.props.getCharId(char.id)
-							this.setFocusOnCharacter(i)
+							props.getCharId(char.id)
+							setFocusOnCharacter(i)
 						}
 					}}
 				>
@@ -125,27 +115,26 @@ class CharList extends Component {
 		return <ul className='char__grid'>{elements}</ul>
 	}
 
-	render() {
-		const { charList, errorMessage, loading, loadingList, offset, charEnded } = this.state
-		const items = this.renderListItems(charList)
-		const error = errorMessage ? <Error /> : null
-		const spinner = loading ? <Spinner /> : items
+	const items = renderListItems(charList)
+	const error = errorMessage ? <Error /> : null
+	const spinner = loading ? <Spinner /> : items
 
-		return (
-			<div className='char__list'>
-				{error || spinner}
-				{charEnded ? null : (
-					<button
-						className='button button__main button__long'
-						onClick={() => this.loadMoreCharacters(offset)}
-						disabled={loadingList}
-					>
-						<div className='inner'>load more</div>
-					</button>
-				)}
-			</div>
-		)
-	}
+	console.log(charList)
+
+	return (
+		<div className='char__list'>
+			{error || spinner}
+			{charEnded ? null : (
+				<button
+					className='button button__main button__long'
+					onClick={() => loadMoreCharacters(offset)}
+					disabled={loadingList}
+				>
+					<div className='inner'>load more</div>
+				</button>
+			)}
+		</div>
+	)
 }
 
 CharList.propTypes = {

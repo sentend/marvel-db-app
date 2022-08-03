@@ -59,7 +59,7 @@ class RandomChar extends Component {
 		const { char, loading, errorMessage } = this.state
 
 		const error = errorMessage ? <Error /> : null
-		const spinner = loading ? <Spinner /> : <View char={char} />
+		const spinner = loading ? <Spinner /> : <View char={char} getCharId={this.props.getCharId} />
 
 		return (
 			<div className='randomchar'>
@@ -83,11 +83,11 @@ class RandomChar extends Component {
 	}
 }
 
-const View = ({ char }) => {
-	const { thumbnail, name, description, homepage, wiki } = char
+const View = ({ char, getCharId }) => {
+	const { thumbnail, name, description, homepage, wiki, id } = char
 
 	return (
-		<div className='randomchar__block'>
+		<div className='randomchar__block' onClick={() => getCharId(id)} style={{ cursor: 'pointer' }}>
 			<img src={thumbnail} alt='Random character' className='randomchar__img' />
 			<div className='randomchar__info'>
 				<p className='randomchar__name'>{name}</p>
