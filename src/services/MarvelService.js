@@ -1,38 +1,33 @@
 import axios from 'axios'
 
-class MarvelService {
-	_apiBase = 'https://gateway.marvel.com:443/v1/public/'
-	_apiKey = 'apikey=893a9b7dba2d7b81bf6c25ef2a7f0761'
-	_offset = 350
-	_limit = 9
+import { useHttp } from '../hooks/http.hook'
 
-	getData = async (url) => {
-		let res = await axios.get(url)
+const useMarvelService = () => {
+	const { loading, errorMessage, request } = useHttp()
 
-		if (!res.status === 200 && res.statusText === 'OK') {
-			throw new Error(`could not get request to ${url} status is ${res.status}`)
-		}
-		return res.data
+	const _apiBase = 'https://gateway.marvel.com:443/v1/public/'
+	const _apiKey = 'apikey=893a9b7dba2d7b81bf6c25ef2a7f0761'
+	const _offset = 350
+	const _limit = 9
+
+	const getAllCharacters = async (offset) => {
+		const characters = await request(`${_apiBase}characters?limit=${_limit}&offset=${offset}&${_apiKey}`)
+		return characters.data.results.map((char) => _tranformData(char))
 	}
 
-	getAllCharacters = async (offset = this._offset) => {
-		const characters = await this.getData(
-			`${this._apiBase}characters?limit=${this._limit}&offset=${offset}&${this._apiKey}`
-		)
-		return characters.data.results.map((char) => this._tranformData(char))
+	const getCharacter = async (id) => {
+		console.log('getCharacter')
+		const result = await request(`${_apiBase}characters/${id}?&${_apiKey}`)
+		console.log(result)
+		return _tranformData(result.data.results[0])
 	}
 
-	getCharacter = async (id) => {
-		const result = await this.getData(`${this._apiBase}characters/${id}?&${this._apiKey}`)
-		return this._tranformData(result.data.results[0])
-	}
-
-	getTotalCharacters = async () => {
-		const result = await this.getData(`${this._apiBase}characters?${this._apiKey}`)
+	const getTotalCharacters = async () => {
+		const result = await request(`${_apiBase}characters?${_apiKey}`)
 		return result.data.total
 	}
 
-	_tranformData = (char) => {
+	const _tranformData = (char) => {
 		if (char.description === '') {
 			char.description = 'This character does not have description'
 		} else if (char.description.length > 150) {
@@ -50,6 +45,14 @@ class MarvelService {
 			availableComics: char.comics.available,
 		}
 	}
+
+	return {
+		getTotalCharacters,
+		getCharacter,
+		getAllCharacters,
+		loading,
+		errorMessage,
+	}
 }
 
-export default MarvelService
+export default useMarvelService

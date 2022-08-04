@@ -17,10 +17,10 @@ const App = () => {
 			<AppHeader />
 			<main>
 				<RandomChar getCharId={handleGetCharId} />
-				<div className='char__content'>
+				{/* <div className='char__content'>
 					<CharList getCharId={handleGetCharId} />
 					<CharInfo id={charId} />
-				</div>
+				</div> */}
 			</main>
 		</div>
 	)

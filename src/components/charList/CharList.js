@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useMemo } from 'react'
 import PropTypes from 'prop-types'
 
 import MarvelService from '../../services/MarvelService'
@@ -77,6 +77,7 @@ const CharList = (props) => {
 		refsArray.current.forEach((ref) => {
 			ref.classList.remove('char__item_selected')
 		})
+		console.log(refsArray)
 
 		refsArray.current[id].classList.add('char__item_selected')
 		refsArray.current[id].focus()
@@ -119,15 +120,13 @@ const CharList = (props) => {
 	const error = errorMessage ? <Error /> : null
 	const spinner = loading ? <Spinner /> : items
 
-	console.log(charList)
-
 	return (
 		<div className='char__list'>
 			{error || spinner}
 			{charEnded ? null : (
 				<button
 					className='button button__main button__long'
-					onClick={() => loadMoreCharacters(offset)}
+					onClick={() => setNewCharsLoading(true)}
 					disabled={loadingList}
 				>
 					<div className='inner'>load more</div>
