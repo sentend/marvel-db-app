@@ -1,16 +1,15 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 
+import Error404 from './Error404'
 import useMarvelService from '../../services/MarvelService'
 import Spinner from '../spinner/Spinner'
-import Error from '../errorMessage/Error'
 
 import './singleComicPage.scss'
 
 const SingleComicPage = () => {
 	const [comic, setComic] = useState({})
 	const { comicId } = useParams()
-	const navigate = useNavigate()
 	const { getComic, loading, errorMessage } = useMarvelService()
 
 	useEffect(() => {
@@ -23,7 +22,7 @@ const SingleComicPage = () => {
 		})
 	}
 
-	const error = errorMessage ? <Error /> : null
+	const error = errorMessage ? <Error404 /> : null
 	const spinner = loading ? <Spinner /> : <View comic={comic} />
 
 	return <div className='single-comic'>{error || spinner}</div>
