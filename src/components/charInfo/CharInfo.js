@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 
 import useMarvelService from '../../services/MarvelService'
 import Skeleton from '../skeleton/Skeleton'
@@ -50,7 +51,7 @@ const View = ({ char }) => {
 		}
 		return (
 			<li className='char__comics-item' key={i}>
-				<a href={comic.resourceURI}>{comic.name}</a>
+				<Link to={`/comics/${comic.resourceURI.match(/\d/g).slice(1).join('')}`}>{comic.name}</Link>
 			</li>
 		)
 	})

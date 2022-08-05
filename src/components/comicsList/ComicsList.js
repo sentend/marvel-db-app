@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
+import { Link } from 'react-router-dom'
 
 import useMarvelService from '../../services/MarvelService'
 import Spinner from '../spinner/Spinner'
@@ -31,17 +32,20 @@ const ComicsList = () => {
 		}
 	}, [newComicsLoading])
 
-	const loadComics = (offsetLocal) => {
-		setLoadingList(true)
-		getAllComics(offsetLocal)
-			.then((newComicsList) => {
-				setComicsList((comicsList) => [...comicsList, ...newComicsList])
-				setLoadingList(false)
-				setOffset((offset) => offset + 12)
-				setComicsEnded(newComicsList.length < 12 ? true : false)
-			})
-			.finally(() => setNewComicsLoading(false))
-	}
+	const loadComics = useCallback(
+		(offsetLocal) => {
+			setLoadingList(true)
+			getAllComics(offsetLocal)
+				.then((newComicsList) => {
+					setComicsList((comicsList) => [...comicsList, ...newComicsList])
+					setLoadingList(false)
+					setOffset((offset) => offset + 12)
+					setComicsEnded(newComicsList.length < 12 ? true : false)
+				})
+				.finally(() => setNewComicsLoading(false))
+		},
+		[comicsList]
+	)
 
 	const loadMoreComicsOnScroll = () => {
 		console.log(loadingList)
@@ -57,14 +61,14 @@ const ComicsList = () => {
 	}
 
 	const renderListItems = (charList) => {
-		const elements = charList.map((comic, i) => {
+		const elements = charList.map((comic) => {
 			return (
 				<li className='comics__item' key={comic.id}>
-					<a href='#'>
+					<Link to={`/comics/${comic.id}`}>
 						<img src={comic.img} alt={comic.title} className='comics__item-img' />
 						<div className='comics__item-name'>{comic.title}</div>
 						<div className='comics__item-price'>{comic.price}</div>
-					</a>
+					</Link>
 				</li>
 			)
 		})

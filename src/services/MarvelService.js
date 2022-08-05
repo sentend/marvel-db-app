@@ -57,8 +57,8 @@ const useMarvelService = () => {
 			id: comic.id,
 			title: comic.title,
 			description: comic.description === null ? 'There is no description about this comics' : comic.description,
-			pages: comic.pageCount > 0 ? comic.pageCount : 'There is not information about pages',
-			price: comic.prices.price ? comic.prices.price : 'NOT AVAILABLE',
+			pages: comic.pageCount > 0 ? comic.pageCount + ' pages' : 'There is not information about pages',
+			price: comic.prices[0].price ? comic.prices[0].price + '$' : 'NOT AVAILABLE',
 			img: comic.thumbnail.path + '.' + comic.thumbnail.extension,
 			language: comic.textObjects.language || 'en-us',
 		}
