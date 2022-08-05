@@ -10,18 +10,19 @@ import mjolnir from '../../resources/img/mjolnir.png'
 const RandomChar = (props) => {
 	const [char, setChar] = useState({})
 
-	const { loading, errorMessage, getCharacter } = useMarvelService()
+	const { loading, errorMessage, getCharacter, clearError } = useMarvelService()
 
 	useEffect(() => {
 		getRandomChar()
-		//const timerID = setInterval(getRandomChar, 6000)
+		const timerID = setInterval(getRandomChar, 6000)
 
 		return () => {
-			//clearInterval(timerID)
+			clearInterval(timerID)
 		}
 	}, [])
 
 	const getRandomChar = () => {
+		clearError()
 		const id = Math.floor(Math.random() * (1011400 - 1011000) + 1011000)
 		getCharacter(id).then((char) => {
 			setChar(char)

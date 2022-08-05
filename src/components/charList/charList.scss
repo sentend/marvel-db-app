@@ -32,6 +32,9 @@
 			box-shadow: 0 5px 20px $main-color;
 			transform: translateY(-8px);
 		}
+		&:hover {
+			transform: translateY(-3px);
+		}
 	}
 	&__name {
 		font-weight: bold;

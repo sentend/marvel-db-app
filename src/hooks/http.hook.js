@@ -3,12 +3,11 @@ import axios from 'axios'
 
 export const useHttp = () => {
 	const [loading, setLoading] = useState(false)
-	const [errorMessage, setErrorMessage] = useState(null) //если баг, то исправить на null
+	const [errorMessage, setErrorMessage] = useState(false)
 
 	const request = useCallback(async (url) => {
 		setLoading(true)
 
-		//todo понять почему происходит бесконечное количество запросов на сервер
 		try {
 			const response = await axios.get(url)
 
@@ -17,8 +16,7 @@ export const useHttp = () => {
 			}
 
 			setLoading(false)
-			console.log(response.data)
-			return response
+			return response.data
 		} catch (e) {
 			setLoading(false)
 			setErrorMessage(e.message)
@@ -27,7 +25,7 @@ export const useHttp = () => {
 	}, [])
 
 	const clearError = () => {
-		setErrorMessage(null)
+		setErrorMessage(false)
 	}
 
 	return {

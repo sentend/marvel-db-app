@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useMemo } from 'react'
 import PropTypes from 'prop-types'
 
-import MarvelService from '../../services/MarvelService'
+import useMarvelService from '../../services/MarvelService'
 import Spinner from '../spinner/Spinner'
 import Error from '../errorMessage/Error'
 
@@ -10,17 +10,15 @@ import './charList.scss'
 const CharList = (props) => {
 	const [charList, setCharList] = useState([])
 	const [newCharsLoading, setNewCharsLoading] = useState(false)
-	const [loading, setLoading] = useState(true)
-	const [errorMessage, setErrorMessage] = useState(false)
 	const [loadingList, setLoadingList] = useState(false)
 	const [offset, setOffset] = useState(400)
 	const [charEnded, setCharEnded] = useState(false)
+	const { getAllCharacters, loading, errorMessage } = useMarvelService()
 
-	const marvelRequest = new MarvelService()
 	const refsArray = useRef([])
 
 	useEffect(() => {
-		getCharacters()
+		loadMoreCharacters(offset)
 
 		window.addEventListener('scroll', loadMoreCharactersOnScroll)
 
@@ -31,12 +29,20 @@ const CharList = (props) => {
 
 	useEffect(() => {
 		if (newCharsLoading) {
+			setLoadingList(true)
 			loadMoreCharacters(offset)
 		}
 	}, [newCharsLoading])
 
-	const getCharacters = () => {
-		loadMoreCharacters()
+	const loadMoreCharacters = (offsetLocal) => {
+		getAllCharacters(offsetLocal)
+			.then((newCharList) => {
+				setCharList((charList) => [...charList, ...newCharList])
+				setLoadingList(false)
+				setOffset((offset) => offset + 9)
+				setCharEnded(newCharList.length < 9 ? true : false)
+			})
+			.finally(() => setNewCharsLoading(false))
 	}
 
 	const loadMoreCharactersOnScroll = () => {
@@ -51,33 +57,10 @@ const CharList = (props) => {
 		}
 	}
 
-	const loadMoreCharacters = (offsetLocal = offset) => {
-		setLoadingList(true)
-
-		marvelRequest
-			.getAllCharacters(offsetLocal)
-			.then((newCharList) => {
-				setCharList((charList) => [...charList, ...newCharList])
-				setLoading(false)
-				setErrorMessage(false)
-				setLoadingList(false)
-				setOffset((offset) => offset + 9)
-				setCharEnded(newCharList.length < 9 ? true : false)
-			})
-			.catch(getError)
-			.finally(() => setNewCharsLoading(false))
-	}
-
-	const getError = () => {
-		setLoading(false)
-		setErrorMessage(true)
-	}
-
 	const setFocusOnCharacter = (id) => {
 		refsArray.current.forEach((ref) => {
 			ref.classList.remove('char__item_selected')
 		})
-		console.log(refsArray)
 
 		refsArray.current[id].classList.add('char__item_selected')
 		refsArray.current[id].focus()
@@ -118,7 +101,7 @@ const CharList = (props) => {
 
 	const items = renderListItems(charList)
 	const error = errorMessage ? <Error /> : null
-	const spinner = loading ? <Spinner /> : items
+	const spinner = loading && !newCharsLoading ? <Spinner /> : items
 
 	return (
 		<div className='char__list'>
