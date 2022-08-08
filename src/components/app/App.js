@@ -24,6 +24,7 @@ const App = () => {
 	} else {
 		document.body.classList.remove('dark-theme')
 	}
+	console.log('test')
 
 	return (
 		<div className='app'>
