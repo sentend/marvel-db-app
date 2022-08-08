@@ -1,5 +1,7 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useContext } from 'react'
+import cn from 'classnames'
 
+import { Themes } from '../app/App'
 import useMarvelService from '../../services/MarvelService'
 import Spinner from '../spinner/Spinner'
 import Error from '../errorMessage/Error'
@@ -9,8 +11,12 @@ import mjolnir from '../../resources/img/mjolnir.png'
 
 const RandomChar = (props) => {
 	const [char, setChar] = useState({})
-
+	const context = useContext(Themes)
 	const { loading, errorMessage, getCharacter, clearError } = useMarvelService()
+	const cnStatic = cn({
+		'randomchar__static': true,
+		'dark-theme': context.darkMode ? true : false,
+	})
 
 	useEffect(() => {
 		getRandomChar()
@@ -35,18 +41,22 @@ const RandomChar = (props) => {
 	return (
 		<div className='randomchar'>
 			{error || spinner}
-			<div className='randomchar__static'>
-				<p className='randomchar__title'>
-					Random character for today!
-					<br />
-					Do you want to get to know him better?
-				</p>
-				<p className='randomchar__title'>Or choose another one</p>
-				<button className='button button__main'>
-					<div className='inner' onClick={getRandomChar}>
-						try it
+			<div className={cnStatic}>
+				<div className='randomchar__info-block'>
+					<div className='randomchar__text-block'>
+						<p className='randomchar__title'>
+							Random character for today!
+							<br />
+							Do you want to get to know him better?
+						</p>
+						<p className='randomchar__title'>Or choose another one</p>
 					</div>
-				</button>
+					<button className='button button__main'>
+						<div className='inner' onClick={getRandomChar}>
+							try it
+						</div>
+					</button>
+				</div>
 				<img src={mjolnir} alt='mjolnir' className='randomchar__decoration' />
 			</div>
 		</div>
@@ -55,9 +65,14 @@ const RandomChar = (props) => {
 
 const View = ({ char, getCharId }) => {
 	const { thumbnail, name, description, homepage, wiki, id } = char
+	const context = useContext(Themes)
+	const cnBlock = cn({
+		'randomchar__block': true,
+		'dark-theme': context.darkMode ? true : false,
+	})
 
 	return (
-		<div className='randomchar__block' onClick={() => getCharId(id)} style={{ cursor: 'pointer' }}>
+		<div className={cnBlock} onClick={() => getCharId(id)} style={{ cursor: 'pointer' }}>
 			<img src={thumbnail} alt='Random character' className='randomchar__img' />
 			<div className='randomchar__info'>
 				<p className='randomchar__name'>{name}</p>

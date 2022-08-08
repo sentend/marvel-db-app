@@ -4,11 +4,18 @@
 	display: grid;
 	grid-template-columns: repeat(2, 50%);
 	box-shadow: 5px 5px 20px rgba(0, 0, 0, 0.25);
+	border-radius: 10px;
+	height: 290px;
+
 	&__block {
 		padding: 40px 35px;
 		display: grid;
 		grid-template-columns: 180px auto;
 		column-gap: 30px;
+		&.dark-theme {
+			background-color: rgb(72, 72, 72);
+			color: rgb(2, 2, 2);
+		}
 	}
 	&__img {
 		width: 180px;
@@ -40,16 +47,26 @@
 		padding: 40px 35px;
 		background-color: $dark;
 		position: relative;
-		button {
-			margin-top: 13px;
+		border-top-right-radius: 10px;
+		border-bottom-right-radius: 10px;
+		color: #fff;
+		&.dark-theme {
+			background-color: rgb(55, 55, 55);
+			color: rgb(156, 156, 156);
 		}
+		button {
+			margin-top: 42px;
+		}
+	}
+	&__text-block {
+		display: flex;
+		flex-direction: column;
 	}
 	&__title {
 		font-weight: bold;
 		font-size: 24px;
 		line-height: 32px;
 		letter-spacing: -0.045em;
-		color: #ffffff;
 		&:nth-child(2) {
 			margin-top: 33px;
 		}

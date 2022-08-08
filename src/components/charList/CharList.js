@@ -1,9 +1,10 @@
-import { useState, useEffect, useRef, useMemo } from 'react'
+import { useState, useEffect, useRef, useContext } from 'react'
 import PropTypes from 'prop-types'
 
 import useMarvelService from '../../services/MarvelService'
 import Spinner from '../spinner/Spinner'
 import Error from '../errorMessage/Error'
+import { Themes } from '../app/App'
 
 import './charList.scss'
 
@@ -14,6 +15,7 @@ const CharList = (props) => {
 	const [offset, setOffset] = useState(400)
 	const [charEnded, setCharEnded] = useState(false)
 	const { getAllCharacters, loading, errorMessage } = useMarvelService()
+	const context = useContext(Themes)
 
 	const refsArray = useRef([])
 
@@ -35,6 +37,7 @@ const CharList = (props) => {
 	}, [newCharsLoading])
 
 	const loadMoreCharacters = (offsetLocal) => {
+		setLoadingList(true)
 		getAllCharacters(offsetLocal)
 			.then((newCharList) => {
 				setCharList((charList) => [...charList, ...newCharList])
@@ -57,7 +60,7 @@ const CharList = (props) => {
 		}
 	}
 
-	const setFocusOnCharacter = (id) => {
+	const setFocusOnCharacter = (id, charId) => {
 		refsArray.current.forEach((ref) => {
 			ref.classList.remove('char__item_selected')
 		})
@@ -68,25 +71,26 @@ const CharList = (props) => {
 
 	const renderListItems = (charList) => {
 		const elements = charList.map((char, i) => {
-			let style = { objectFit: 'cover' }
+			let style = { objectFit: 'cover', borderRadius: 10 }
 			if (char.thumbnail === 'http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg') {
-				style = { objectFit: 'unset' }
+				style = { objectFit: 'unset', borderRadius: 10 }
 			}
 
 			return (
 				<li
 					ref={(el) => (refsArray.current[i] = el)}
 					className='char__item'
+					style={{ backgroundColor: context.darkMode ? '#2d2d2d' : '' }}
 					key={char.name}
 					onClick={() => {
 						props.getCharId(char.id)
-						setFocusOnCharacter(i)
+						setFocusOnCharacter(i, char.id)
 					}}
 					tabIndex={0}
 					onKeyDown={(e) => {
 						if (e.key === ' ' || e.key === 'Enter') {
 							props.getCharId(char.id)
-							setFocusOnCharacter(i)
+							setFocusOnCharacter(i, char.id)
 						}
 					}}
 				>

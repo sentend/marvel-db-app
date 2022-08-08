@@ -1,28 +1,37 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useContext } from 'react'
 import { Link } from 'react-router-dom'
+import cn from 'classnames'
 
 import useMarvelService from '../../services/MarvelService'
 import Skeleton from '../skeleton/Skeleton'
 import Spinner from '../spinner/Spinner'
 import Error from '../errorMessage/Error'
+import { CharContext } from '../pages/MainPage'
+import { Themes } from '../app/App'
 
 import './charInfo.scss'
 
-const CharInfo = (props) => {
+const CharInfo = () => {
 	const [char, setChar] = useState(null)
 	const { getCharacter, loading, errorMessage, clearError } = useMarvelService()
+	const context = useContext(CharContext)
+	const contextTheme = useContext(Themes)
+	const cnCharInfo = cn({
+		'char__info': true,
+		'dark-theme': contextTheme.darkMode ? true : false,
+	})
 
 	useEffect(() => {
 		getCharFromList()
-	}, [props.id])
+	}, [context])
 
 	const getCharFromList = () => {
 		clearError()
-		if (!props.id) {
+		if (!context) {
 			return
 		}
 
-		getCharacter(props.id).then((char) => {
+		getCharacter(context).then((char) => {
 			setChar(char)
 		})
 	}
@@ -33,7 +42,7 @@ const CharInfo = (props) => {
 	const content = !loading && !error && char ? <View char={char} /> : null
 
 	return (
-		<div className='char__info'>
+		<div className={cnCharInfo}>
 			{skeleton}
 			{error}
 			{spinner}

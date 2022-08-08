@@ -1,9 +1,10 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useContext } from 'react'
 import { Link } from 'react-router-dom'
 
 import useMarvelService from '../../services/MarvelService'
 import Spinner from '../spinner/Spinner'
 import Error from '../errorMessage/Error'
+import { Themes } from '../app/App'
 
 import './comicsList.scss'
 
@@ -14,6 +15,7 @@ const ComicsList = () => {
 	const [comicsEnded, setComicsEnded] = useState(false)
 	const [loadingList, setLoadingList] = useState(false)
 	const { loading, errorMessage, getAllComics } = useMarvelService()
+	const context = useContext(Themes)
 
 	useEffect(() => {
 		loadComics(offset)
@@ -67,7 +69,9 @@ const ComicsList = () => {
 					<Link to={`/comics/${comic.id}`}>
 						<img src={comic.img} alt={comic.title} className='comics__item-img' />
 						<div className='comics__item-name'>{comic.title}</div>
-						<div className='comics__item-price'>{comic.price}</div>
+						<div className='comics__item-price' style={{ color: context.darkMode ? 'white' : '' }}>
+							{comic.price}
+						</div>
 					</Link>
 				</li>
 			)
