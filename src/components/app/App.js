@@ -12,19 +12,31 @@ const SingleComicPage = lazy(() => import('../pages/SingleComicsPage.js'))
 
 export const Themes = createContext()
 
+let dark = false
+if (localStorage.getItem('darkMode')) {
+	dark = true
+}
+
 const App = () => {
-	const [darkMode, setDarkMode] = useState(false)
+	const [darkMode, setDarkMode] = useState(dark)
 
 	const toggleDarkMode = () => {
 		setDarkMode((darkMode) => !darkMode)
 	}
+
+	useEffect(() => {
+		if (darkMode) {
+			localStorage.setItem('darkMode', darkMode)
+		} else {
+			localStorage.removeItem('darkMode')
+		}
+	}, [darkMode])
 
 	if (darkMode) {
 		document.body.classList.add('dark-theme')
 	} else {
 		document.body.classList.remove('dark-theme')
 	}
-	console.log('test')
 
 	return (
 		<div className='app'>
