@@ -6,12 +6,29 @@
 	box-shadow: 5px 5px 20px rgba(0, 0, 0, 0.25);
 	border-radius: 10px;
 	height: 290px;
-
+	&-enter {
+		opacity: 0;
+		transform: scale(0.7);
+	}
+	&-enter-active {
+		opacity: 01;
+		transform: scale(1);
+		transition: all 300ms;
+	}
+	&-exit {
+		opacity: 1;
+	}
+	&-exit-active {
+		opacity: 0;
+		transform: scale(0.7);
+		transition: all 300ms;
+	}
 	&__block {
 		padding: 40px 35px;
 		display: grid;
 		grid-template-columns: 180px auto;
 		column-gap: 30px;
+
 		&.dark-theme {
 			background-color: rgb(72, 72, 72);
 			color: rgb(2, 2, 2);

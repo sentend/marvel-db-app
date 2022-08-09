@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useContext } from 'react'
 import PropTypes from 'prop-types'
+import { CSSTransition, TransitionGroup } from 'react-transition-group'
 
 import useMarvelService from '../../services/MarvelService'
 import Spinner from '../spinner/Spinner'
@@ -14,6 +15,7 @@ const CharList = (props) => {
 	const [loadingList, setLoadingList] = useState(false)
 	const [offset, setOffset] = useState(400)
 	const [charEnded, setCharEnded] = useState(false)
+	const [animateList, setAnimateList] = useState(true)
 	const { getAllCharacters, loading, errorMessage } = useMarvelService()
 	const context = useContext(Themes)
 
@@ -45,7 +47,10 @@ const CharList = (props) => {
 				setOffset((offset) => offset + 9)
 				setCharEnded(newCharList.length < 9 ? true : false)
 			})
-			.finally(() => setNewCharsLoading(false))
+			.finally(() => {
+				setNewCharsLoading(false)
+				setAnimateList(false)
+			})
 	}
 
 	const loadMoreCharactersOnScroll = () => {
@@ -77,30 +82,35 @@ const CharList = (props) => {
 			}
 
 			return (
-				<li
-					ref={(el) => (refsArray.current[i] = el)}
-					className='char__item'
-					style={{ backgroundColor: context.darkMode ? '#2d2d2d' : '' }}
-					key={char.name}
-					onClick={() => {
-						props.getCharId(char.id)
-						setFocusOnCharacter(i, char.id)
-					}}
-					tabIndex={0}
-					onKeyDown={(e) => {
-						if (e.key === ' ' || e.key === 'Enter') {
+				<CSSTransition key={char.name} mountOnEnter timeout={5000} classNames='char__item'>
+					<li
+						ref={(el) => (refsArray.current[i] = el)}
+						className='char__item'
+						style={{ backgroundColor: context.darkMode ? '#2d2d2d' : '' }}
+						onClick={() => {
 							props.getCharId(char.id)
 							setFocusOnCharacter(i, char.id)
-						}
-					}}
-				>
-					<img src={char.thumbnail} alt={char.name} style={style} />
-					<div className='char__name'>{char.name}</div>
-				</li>
+						}}
+						tabIndex={0}
+						onKeyDown={(e) => {
+							if (e.key === ' ' || e.key === 'Enter') {
+								props.getCharId(char.id)
+								setFocusOnCharacter(i, char.id)
+							}
+						}}
+					>
+						<img src={char.thumbnail} alt={char.name} style={style} />
+						<div className='char__name'>{char.name}</div>
+					</li>
+				</CSSTransition>
 			)
 		})
 
-		return <ul className='char__grid'>{elements}</ul>
+		return (
+			<ul className='char__grid'>
+				<TransitionGroup component={null}>{elements}</TransitionGroup>
+			</ul>
+		)
 	}
 
 	const items = renderListItems(charList)

@@ -1,5 +1,6 @@
 import { useState, useEffect, useContext } from 'react'
 import cn from 'classnames'
+import { CSSTransition } from 'react-transition-group'
 
 import { Themes } from '../app/App'
 import useMarvelService from '../../services/MarvelService'
@@ -11,6 +12,7 @@ import mjolnir from '../../resources/img/mjolnir.png'
 
 const RandomChar = (props) => {
 	const [char, setChar] = useState({})
+	const [charLoaded, setcharLoaded] = useState(false)
 	const context = useContext(Themes)
 	const { loading, errorMessage, getCharacter, clearError } = useMarvelService()
 	const cnStatic = cn({
@@ -19,6 +21,7 @@ const RandomChar = (props) => {
 	})
 
 	useEffect(() => {
+		setcharLoaded(false)
 		getRandomChar()
 		const timerID = setInterval(getRandomChar, 6000)
 
@@ -33,33 +36,36 @@ const RandomChar = (props) => {
 		getCharacter(id).then((char) => {
 			setChar(char)
 		})
+		setcharLoaded(true)
 	}
 
 	const error = errorMessage ? <Error /> : null
 	const spinner = loading ? <Spinner /> : <View char={char} getCharId={props.getCharId} />
 
 	return (
-		<div className='randomchar'>
-			{error || spinner}
-			<div className={cnStatic}>
-				<div className='randomchar__info-block'>
-					<div className='randomchar__text-block'>
-						<p className='randomchar__title'>
-							Random character for today!
-							<br />
-							Do you want to get to know him better?
-						</p>
-						<p className='randomchar__title'>Or choose another one</p>
-					</div>
-					<button className='button button__main'>
-						<div className='inner' onClick={getRandomChar}>
-							try it
+		<CSSTransition timeout={300} in={charLoaded} unmountOnExit classNames='randomchar'>
+			<div className='randomchar'>
+				{error || spinner}
+				<div className={cnStatic}>
+					<div className='randomchar__info-block'>
+						<div className='randomchar__text-block'>
+							<p className='randomchar__title'>
+								Random character for today!
+								<br />
+								Do you want to get to know him better?
+							</p>
+							<p className='randomchar__title'>Or choose another one</p>
 						</div>
-					</button>
+						<button className='button button__main'>
+							<div className='inner' onClick={getRandomChar}>
+								try it
+							</div>
+						</button>
+					</div>
+					<img src={mjolnir} alt='mjolnir' className='randomchar__decoration' />
 				</div>
-				<img src={mjolnir} alt='mjolnir' className='randomchar__decoration' />
 			</div>
-		</div>
+		</CSSTransition>
 	)
 }
 
