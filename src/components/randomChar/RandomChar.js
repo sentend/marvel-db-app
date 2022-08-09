@@ -23,7 +23,7 @@ const RandomChar = (props) => {
 	useEffect(() => {
 		setcharLoaded(false)
 		getRandomChar()
-		const timerID = setInterval(getRandomChar, 6000)
+		const timerID = setInterval(getRandomChar, 60000)
 
 		return () => {
 			clearInterval(timerID)
@@ -45,7 +45,9 @@ const RandomChar = (props) => {
 	return (
 		<CSSTransition timeout={300} in={charLoaded} unmountOnExit classNames='randomchar'>
 			<div className='randomchar'>
-				{error || spinner}
+				<CSSTransition timeout={500} in={charLoaded} classNames='randomchar__block'>
+					{error || spinner}
+				</CSSTransition>
 				<div className={cnStatic}>
 					<div className='randomchar__info-block'>
 						<div className='randomchar__text-block'>
