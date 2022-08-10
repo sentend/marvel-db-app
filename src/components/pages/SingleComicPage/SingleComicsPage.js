@@ -1,5 +1,6 @@
 import { useContext } from 'react'
 import { Link } from 'react-router-dom'
+import { Helmet } from 'react-helmet'
 
 import { Themes } from '../../app/App'
 import withSinglePage from '../../HOC/SinglePage'
@@ -10,6 +11,10 @@ const SingleComicPage = ({ data }) => {
 	const context = useContext(Themes)
 	return (
 		<div className='single-comic'>
+			<Helmet>
+				<meta name='description' content={`${data.title} comic book`} />
+				<title>{`${data.title} comics`}</title>
+			</Helmet>
 			<img src={data.img} alt={data.title} className='single-comic__img' />
 			<div className='single-comic__info'>
 				<h2 className='single-comic__name' style={{ color: context.darkMode ? 'white' : '' }}>

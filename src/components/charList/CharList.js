@@ -15,7 +15,6 @@ const CharList = (props) => {
 	const [loadingList, setLoadingList] = useState(false)
 	const [offset, setOffset] = useState(400)
 	const [charEnded, setCharEnded] = useState(false)
-	const [animateList, setAnimateList] = useState(true)
 	const { getAllCharacters, loading, errorMessage } = useMarvelService()
 	const context = useContext(Themes)
 
@@ -49,7 +48,6 @@ const CharList = (props) => {
 			})
 			.finally(() => {
 				setNewCharsLoading(false)
-				setAnimateList(false)
 			})
 	}
 
