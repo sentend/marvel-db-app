@@ -21,6 +21,7 @@ const AppHeader = () => {
 						backgroundColor: context.darkMode ? 'black' : 'white',
 						padding: 5,
 						cursor: 'pointer',
+						borderRadius: 5,
 					}}
 					onClick={context.toggleDarkMode}
 				>

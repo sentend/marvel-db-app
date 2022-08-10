@@ -19,9 +19,13 @@ const MainPage = () => {
 			<CharContext.Provider value={charId}>
 				<RandomChar getCharId={handleGetCharId} />
 				<div className='char__content'>
-					<CharList getCharId={handleGetCharId} />
-					<CharInfo />
-					{/* <FindCharForm /> */}
+					<div>
+						<CharList getCharId={handleGetCharId} />
+					</div>
+					<div style={{ position: 'sticky', top: 20 }}>
+						<CharInfo />
+						<FindCharForm />
+					</div>
 				</div>
 			</CharContext.Provider>
 		</>

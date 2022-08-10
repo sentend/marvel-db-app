@@ -10,11 +10,19 @@ const useMarvelService = () => {
 
 	const getAllCharacters = async (offset) => {
 		const characters = await request(`${_apiBase}characters?limit=${_charLimit}&offset=${offset}&${_apiKey}`)
-		return characters.data.results.map((char) => _tranformCharacters(char))
+		return characters.data.results.map((char) => _tranformCharacters(char, 'id'))
 	}
 
-	const getCharacter = async (id) => {
+	const getCharacter = async (id, type) => {
 		const result = await request(`${_apiBase}characters/${id}?&${_apiKey}`)
+		return _tranformCharacters(result.data.results[0], type)
+	}
+
+	const getCharacterByName = async (name) => {
+		const result = await request(`${_apiBase}characters?name=${name}&${_apiKey}`)
+		if (result.data.count === 0) {
+			return {}
+		}
 		return _tranformCharacters(result.data.results[0])
 	}
 
@@ -33,10 +41,10 @@ const useMarvelService = () => {
 		return comics.data.results.map((comic) => _tranformComics(comic))
 	}
 
-	const _tranformCharacters = (char) => {
+	const _tranformCharacters = (char, type = null) => {
 		if (char.description === '') {
 			char.description = 'This character does not have description'
-		} else if (char.description.length > 150) {
+		} else if (char.description.length > 150 && !type) {
 			char.description = char.description.slice(0, 150) + '...'
 		}
 
@@ -73,6 +81,7 @@ const useMarvelService = () => {
 		clearError,
 		getComic,
 		getAllComics,
+		getCharacterByName,
 	}
 }
 

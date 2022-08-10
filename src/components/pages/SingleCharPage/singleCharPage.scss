@@ -1,4 +1,4 @@
-@import '../../style/variables.scss';
+@import '../../../style/variables.scss';
 
 .single-comic {
 	margin-top: 50px;
@@ -6,9 +6,10 @@
 	grid-template-columns: 293px 550px auto;
 	column-gap: 50px;
 	align-items: start;
-	&__img {
+	justify-content: space-between;
+	&__char-img {
 		width: 293px;
-		height: 450px;
+		height: 293px;
 		border-radius: 10px;
 	}
 	&__name {
@@ -21,20 +22,16 @@
 		line-height: 24px;
 		margin-top: 25px;
 	}
-	&__price {
-		font-weight: bold;
-		font-size: 24px;
-		line-height: 32px;
-		color: $main-color;
-		margin-top: 25px;
-	}
-	&__back {
-		justify-self: end;
-		font-weight: bold;
+	&__button {
 		font-size: 18px;
-		line-height: 24px;
+		font-weight: bold;
 		&:hover {
 			color: $main-color;
 		}
+	}
+
+	&.dark-theme {
+		background-color: rgb(72, 72, 72);
+		color: rgb(2, 2, 2);
 	}
 }

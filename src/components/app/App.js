@@ -8,7 +8,8 @@ import Spinner from '../spinner/Spinner.js'
 const Page404 = lazy(() => import('../pages/Error404.js'))
 const MainPage = lazy(() => import('../pages/MainPage.js'))
 const ComicsPage = lazy(() => import('../pages/ComicsPage.js'))
-const SingleComicPage = lazy(() => import('../pages/SingleComicsPage.js'))
+const SingleComicPage = lazy(() => import('../pages/SingleComicPage/SingleComicsPage.js'))
+const SingleCharPage = lazy(() => import('../pages/SingleCharPage/SingleCharPage.js'))
 
 export const Themes = createContext()
 
@@ -46,9 +47,12 @@ const App = () => {
 						<Routes>
 							<Route path='/' element={<AppHeader />}>
 								<Route index element={<MainPage />} />
+								<Route element={<AppBanner />}>
+									<Route path='characters/:id' element={<SingleCharPage />} />
+								</Route>
 								<Route path='comics' element={<AppBanner />}>
 									<Route index element={<ComicsPage />} />
-									<Route path=':comicId' element={<SingleComicPage />} />
+									<Route path=':id' element={<SingleComicPage />} />
 								</Route>
 								<Route path='*' element={<Page404 />} />
 							</Route>
